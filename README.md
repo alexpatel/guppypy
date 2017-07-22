@@ -3,6 +3,9 @@
 guppypy is a framework for experimenting with the automated porting of
 operating-system kernels. It is written in Python.
 
+It is mostly at this point a rant on trying to mix functional programming and
+imperative to implement modern OS kernels.
+
 [architecture diagram]
 
 # Design
@@ -29,6 +32,34 @@ operating-system kernels. It is written in Python.
     - We have been talking about synthesizing kernel code by trying to model
     the semantics of small components of that system. This is not the right layer of 
     *abstraction* 
+
+- let us start with continuous integration
+    - you are writing a button that when pressed will compile, test, trigger
+    reviews, use some data, and then deploy. And then you write code that presses
+    the button for you. 
+    - continuous integration is automating the build process
+    - automating the porting process is more like automating the build process
+    than it is like synthesizing arbitrary programming language code
+    - so before you think about synthesis in the PL context you need to think
+    about automation in the systems context, there is a dependency constraint
+
+- when you write test-driven code, you are doing bayesian reasoning
+    - bayesian inference is when you update your beliefs after considering evidence
+    - if you run enough tests or enough perturbations of your code, then you
+    formulate inferences about the software you are writing
+    - there is a lot of uncertainty in OS code, this is why abstraction is good
+        - I don't want to deal with intricacies of how my system component
+        interacts with other components, so i abstract them away
+        - If you are trying to reason about the kernel and whether it works as
+        a whole, though, **abstract away for the os container
+        - Don't start with the systems components, start with the system itself
+
+- the conclusion is that we should not be writing PL code to synthesize systems
+code, we should be using probabilistic programming
+    - when you talk about proving the semantics of a system you ignore the fact
+    you ignore that there is some variable in the way the system works as a
+    whole, you should talk about the system as a probability distribution of
+    behaviors, not as a turing machine that is running a tape
 
 The thesis of the project is that if you treat images as logical formulas, you
 can "move up a level" in the semantic hierarchy and reason about the
