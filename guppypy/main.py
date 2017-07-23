@@ -4,6 +4,7 @@
 import argparse
 
 import build
+import process
 
 
 def parse_args():
@@ -14,6 +15,7 @@ def parse_args():
                         default='os161', dest='kernel')
     return parser.parse_args()
 
+
 def main():
 
     args = parse_args()
@@ -21,8 +23,9 @@ def main():
     #for line in build.build_kernel_image_shell(args.kernel):
     #	print line
     
-    build_name, _ = build.build_kernel_image_shell(args.kernel)
-    build.run_kernel(args.kernel, build_name)
+    build_name = build.build_kernel_image_shell(args.kernel)
+    output = build.run_kernel(args.kernel, build_name)
+    process.process_os161_tt1(output)
 
 
 if __name__ == "__main__":

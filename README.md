@@ -1,11 +1,61 @@
 # guppypy
 
+This library is a program synthesis toolk for operating system kernels. It
+allows you to write Python that injects C code into an arbitrary kernel source
+code and run experiments using Docker of different variations of that code. 
+
+# Example
+
+```python
+from guppypy import OSConfig as Kernel
+
+"""
+Insert a kprintf into the semaphore implementation  and then check that it
+worked with an experiment.
+"""
+
+os161 = Kernel('os161')
+
+default_os = os161.spawn_copy('default')
+synth_os = os161.spawn_copy('synth')
+
+with synth_os.open('kern/thread/thread.c', 'thread_create') as func:
+    kprintf = 'kprintf("Created new thread");'
+    func.inject_beginning(kprint)
+
+default_tests = default_os.run(3, 'tt3')
+synth_tests = synth_os.run(3, 'tt3')
+
+for test in default_tests + synth_tests:
+	if test.passed:
+	    print '{} passed tt3'.format(test.machine.name)
+	else:
+	    print '{} failed tt3'.format(test.machine.name)
+```
+
 # Usage 
+
 
 ```
 pip install -r requirements.txt
 python guppypy/main.py
 ```
+
+
+What is the architecture of this system?
+
+- An `OSConfig` encapsulates the source code of an operating
+system and the instructions of how to build that operating system.
+
+
+- An `OSMachineImage` is a machine instantation of an `OSConfig`. It manifests
+as a virtual machine image that is able to run an operating using a particular
+platform and architecture.
+
+- An `OSMachine` is a running instance of a `OSMachineImage` that can be
+interacted with.
+
+- An `OSMachine` 
 
 ## 07/22/2017
 

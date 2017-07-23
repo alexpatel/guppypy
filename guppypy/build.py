@@ -89,7 +89,8 @@ def build_kernel_image_shell(kernel_name):
     copyin_dockerfile(kernel_name)
     build_name = get_build_name(kernel_name)
     cmd = 'cd {} && docker build . -t {}'.format(os_path, build_name)
-    return build_name, os.system(cmd)
+    os.system(cmd)
+    return build_name
 
 
 def run_kernel(kernel_name, build_name):
@@ -97,4 +98,4 @@ def run_kernel(kernel_name, build_name):
 
     os_path = get_os_path(kernel_name)
     cmd = 'cd {} && docker run {}'.format(os_path, build_name)
-    os.system(cmd)
+    return os.popen(cmd).readlines()
