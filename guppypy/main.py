@@ -3,7 +3,7 @@
 
 import argparse
 
-from build import build_docker_image
+import build
 
 
 def parse_args():
@@ -17,8 +17,11 @@ def parse_args():
 def main():
 
     args = parse_args()
-    print args.kernel
-    build_docker_image(args.kernel)
+
+    #for line in build.build_kernel_image_shell(args.kernel):
+    #	print line
+    
+    build.build_kernel_image_shell(args.kernel)
 
 
 if __name__ == "__main__":
