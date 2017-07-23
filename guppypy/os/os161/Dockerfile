@@ -21,7 +21,7 @@ RUN bmake && bmake install
 RUN cd kern/conf && ./config ASST1
 RUN cd kern/compile/ASST1 && bmake && bmake install
 COPY ./sys161.conf ${BUILD_HOME}/sys161.conf
-RUN apt-get install python-pexpect
+RUN apt-get install -y python-pexpect
 
 WORKDIR ${BUILD_HOME}
 CMD python testscripts/test.py 'tt1'

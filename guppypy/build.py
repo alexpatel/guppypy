@@ -55,8 +55,18 @@ def get_build_name(kernel_name):
     return '{}-{}'.format(kernel_name, int(time.time()))
 
 
+def copyin_dockerfile(kernel_name):
+    """Copy dockerfile into kernel repository. """
+
+    # copy dockerfile into kernel repository
+    os_path = get_os_path(kernel_name)
+    dockerfile_path = os.path.join(os_path, 'Dockerfile')
+    dockerfile_cp_path = os.path.join(os_path, 'src', 'Dockerfile')
+    shutil.copyfile(dockerfile_path, dockerfile_cp_path)
+
+
 def build_kernel_image(kernel_name):
-    """Build docker image for an OS kernel. """
+    """Build docker image for an OS kernel using Docker SDK. """
 
     build_name = get_build_name(kernel_name)
     os_path = get_os_path(kernel_name)
@@ -71,16 +81,13 @@ def build_kernel_image(kernel_name):
     for line in build:
         print line
 
+
 def build_kernel_image_shell(kernel_name):
+    """Build docker image for an OS kernel using shell command. """
 
     os_path = get_os_path(kernel_name)
     src_path = os.path.join(os_path, 'src')
-
-    # copy dockerfile into kernel repository
-    dockerfile_path = os.path.join(os_path, 'Dockerfile')
-    dockerfile_cp_path = os.path.join(os_path, 'src', 'Dockerfile')
-    shutil.copyfile(dockerfile_path, dockerfile_cp_path)
-
+    copyin_dockerfile(kernel_name)
     build_name = get_build_name(kernel_name)
     cmd = 'cd {} && docker build . -t {}'.format(os_path, build_name)
     os.system(cmd)
