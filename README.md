@@ -1,10 +1,10 @@
 # guppypy
 
-# Installation
+# Usage 
 
 ```
-brew install bison flex pyrex
 pip install -r requirements.txt
+python guppypy/main.py
 ```
 
 ## 07/22/2017
