@@ -1,3 +1,6 @@
 [submodule "os161"]
 	path = guppypy/os/os161/src
 	url = https://github.com/CS161/a1-alexpatel
+[submodule "guppy"]
+	path = guppypy/os/guppy/src
+	url = https://github.com/Harvard-PRINCESS/Guppy
