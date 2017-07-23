@@ -1,0 +1,3 @@
+[submodule "os161"]
+	path = guppypy/os/os161/os161-handout
+	url = https://github.com/CS161/a1-alexpatel
