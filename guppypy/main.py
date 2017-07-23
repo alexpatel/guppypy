@@ -21,7 +21,8 @@ def main():
     #for line in build.build_kernel_image_shell(args.kernel):
     #	print line
     
-    build.build_kernel_image_shell(args.kernel)
+    build_name, _ = build.build_kernel_image_shell(args.kernel)
+    build.run_kernel(args.kernel, build_name)
 
 
 if __name__ == "__main__":

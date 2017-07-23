@@ -22,7 +22,7 @@ def get_os_path(kernel):
     return _os_paths[kernel]
  
 
-def get_client(api_client=False):
+def get_docker_client(api_client=False):
     """Get Docker API client. """
 
     global _client
@@ -58,7 +58,6 @@ def get_build_name(kernel_name):
 def copyin_dockerfile(kernel_name):
     """Copy dockerfile into kernel repository. """
 
-    # copy dockerfile into kernel repository
     os_path = get_os_path(kernel_name)
     dockerfile_path = os.path.join(os_path, 'Dockerfile')
     dockerfile_cp_path = os.path.join(os_path, 'src', 'Dockerfile')
@@ -75,7 +74,7 @@ def build_kernel_image(kernel_name):
     build_context = create_tarball(kernel_name, build_name)
 
     # build image
-    docker_client = get_client(api_client=True)
+    docker_client = get_docker_client(api_client=True)
     build = docker_client.build(fileobj=build_context, tag=build_tag,
                                 custom_context=True, encoding="gzip")
     for line in build:
@@ -90,4 +89,12 @@ def build_kernel_image_shell(kernel_name):
     copyin_dockerfile(kernel_name)
     build_name = get_build_name(kernel_name)
     cmd = 'cd {} && docker build . -t {}'.format(os_path, build_name)
+    return build_name, os.system(cmd)
+
+
+def run_kernel(kernel_name, build_name):
+    """Run a test aginast a kernel. """
+
+    os_path = get_os_path(kernel_name)
+    cmd = 'cd {} && docker run {}'.format(os_path, build_name)
     os.system(cmd)
