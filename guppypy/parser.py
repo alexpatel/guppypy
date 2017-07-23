@@ -1,21 +1,30 @@
-#------------------------------------------------------------------------------
-# pycparser: c-to-c.py
-#
-# Example of using pycparser.c_generator, serving as a simplistic translator
-# from C to AST and back to C.
-#
-# Eli Bendersky [http://eli.thegreenplace.net]
-# License: BSD
-#------------------------------------------------------------------------------
-from __future__ import print_function
-import sys
-
-# This is not required if you've installed pycparser into
-# your site-packages/ with setup.py
-#
-sys.path.extend(['.', '..'])
+# -*- coding: utf-8 -*-
 
 from pycparser import parse_file, c_parser, c_generator
+
+
+class C99(object):
+    pass
+
+
+class C99Function(Object):
+
+    def __init__(kernel, src_path, func_name):
+	self.kernel = kernel
+	self.src_path = src_path
+	self.func_name = func_name
+
+    def open(self):
+        return self
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self):
+        pass
+
+
+
 
 
 def translate_to_c(filename):
@@ -53,7 +62,6 @@ int main(void)
     #~ tr.results().write_results()
 
 
-#------------------------------------------------------------------------------
 if __name__ == "__main__":
     _zz_test_translate()
     if len(sys.argv) > 1:
