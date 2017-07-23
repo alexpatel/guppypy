@@ -1,19 +1,25 @@
 #!/usr/bin/env python
 
-import os
 import io
+import os
+import tarfile
+import time
 
 import docker
 
 _client = None
+_os_paths = {}
 
 
 def get_os_path(kernel):
     """Get absolute path of kernel in os/. """
-    dir = os.path.dirname(__file__)
-    path = os.path.join(dir, 'os', kernel)
-    return path
 
+    if kernel not in _os_paths:
+        dir = os.path.dirname(__file__)
+        path = os.path.join(dir, 'os', kernel)
+        _os_paths[kernel] = path
+    return _os_paths[kernel]
+ 
 
 def get_client(api_client=False):
     """Get Docker API client. """
@@ -27,23 +33,35 @@ def get_client(api_client=False):
     return _client
 
 
-def get_dockerfile_fileobj(os_path):
-    """Load a dockerfile for an OS kernel. """
+def get_tarball_dir():
+    """Get path of place to put kernel context tarballs. """
 
-    dockerfile_path = os.path.join(os_path, 'Dockerfile')
-    print os_path
-    print dockerfile_path
-    with open(dockerfile_path, 'r') as dockerfile:
-        contents = dockerfile.read()
-        return io.BytesIO(contents.encode('utf-8'))
+    dir = os.path.dirname(__file__)
+    return os.path.join(dir, 'tar')
 
 
-def build_docker_image(kernel):
+def create_tarball(kernel_name, build_name):
+    """Create kernel Docker build context tarball. """
+    
+    os_path = get_os_path(kernel_name)
+    tarname = os.path.join(get_tarball_dir(), build_name)
+    with tarfile.open(tarname, "w:gz") as tar:
+        tar.add(os_path, arcname=os.path.basename(os_path))
+    return tarname
+
+
+def get_build_name(kernel_name):
+    return '{}-{}'.format(kernel_name, int(time.time()))
+
+
+def build_kernel_image(kernel_name):
     """Build docker image for an OS kernel. """
 
-    os_path = get_os_path(kernel)
-    dockerfile_fileobj = get_dockerfile_fileobj(os_path)
-    tag = 'guppypy/{}'.format(kernel)
+    build_name = get_build_name(kernel_name)
+    os_path = get_os_path(kernel_name)
+
+    build_tag = 'guppypy/{}'.format(build_name)
+    build_context = create_tarball(kernel_name, build_name)
 
     # build image
     docker_client = get_client(api_client=True)
