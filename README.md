@@ -1,5 +1,12 @@
 # guppypy
 
+# Installation
+
+```
+brew install bison flex pyrex
+pip install -r requirements.txt
+```
+
 ## 07/22/2017
 
 guppypy is a framework for experimenting with the automated porting of
