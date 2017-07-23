@@ -12,7 +12,7 @@ RUN deps= apt-get update -yqq \
     && apt-get install -yqq --no-install-recommends os161-toolchain
 
 # add the source code
-COPY ./os161-handout ${OS_HOME}
+COPY ./src ${OS_HOME}
 
 # configure and compile
 WORKDIR ${OS_HOME}
