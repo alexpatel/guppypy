@@ -55,7 +55,7 @@ int main(void)
 
 #------------------------------------------------------------------------------
 if __name__ == "__main__":
-    #_zz_test_translate()
+    _zz_test_translate()
     if len(sys.argv) > 1:
         translate_to_c(sys.argv[1])
     else:
