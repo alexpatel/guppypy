@@ -1,3 +1,6 @@
 [submodule "guppy"]
 	path = guppypy/os/guppy/src
 	url = https://github.com/Harvard-PRINCESS/Guppy
+[submodule "guppypy/guppy"]
+	path = guppypy/guppy
+	url = git@github.com:Harvard-PRINCESS/Guppy.git
