@@ -5,22 +5,27 @@ Use model checking to synthesize X86 assembly to restore user stack after
 system call in BarrelfishOS.
 """
 
+from jinja2 import Template
 from pysmt.typing import INT
 from pysmt.shortcuts import Symbol, Int, And, GE, LE, GT, get_model
 
 from register import Register as REG
 
+def create_symbols(registers):
+    return {
+        reg: Symbol(reg, INT) for reg in registers
+    }
 
-registers = dict(map(lambda r: (r, Symbol(r, INT)), [
+registers = create_symbols([
     '%r10', '%r11', '%r12', '%r13', '%r14', '%r15', '%r8', '%r9', '%rax', '%rbp',
     '%rbx', '%rcx'
-]))
+])
 
 stack = range(2, 14)
-low, high = min(stack), max(stack)
+first_index, last_index= min(stack), max(stack)
 
 def is_valid_stack_arg(reg):
-    return And(LE(reg, Int(max(stack))), GE(reg, Int(min(stack)))) 
+    return And(GE(reg, Int(first_index)), LE(reg, Int(last_index))) 
 
 domain = [
     And(is_valid_stack_arg(reg) for reg in registers.values()),
@@ -44,3 +49,15 @@ if model:
     print model
 else:
     print 'No solutions found.'
+
+
+
+def custom_function(a):
+    return a.replace('o', 'ay')
+
+template = 'Hey, my name is {{ custom_function(first_name) }}'
+jinga_html_template = Template(template)
+jinga_html_template.globals['custom_function'] = custom_function
+
+fields = {'first_name': 'Jo'}
+print jinga_html_template.render(**fields)
