@@ -1,0 +1,3 @@
+[submodule "guppy"]
+	path = guppy
+	url = git@github.com:Harvard-PRINCESS/Guppy.git
