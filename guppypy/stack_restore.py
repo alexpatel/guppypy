@@ -1,68 +1,20 @@
 #!/usr/env/bin python
 
-"""
-Use a machine description to synthesize X86 assembly that restores user stack
-in a system call handler in BarrelfishOS.
-"""
-
 from jinja2 import Template
-
-
-from pysmt.typing import INT
-from pysmt.shortcuts import Symbol, Int, And, GE, LE, get_model
-from pysmt.shortcuts import LT
-
-
-# user-space stack
-stack = range(0, 12)
-
-# CPU registers
-regs = dict()
-
-
-class X86StackRegister(object):
-    """
-    A X86StackRegister is a logical atom. It stores a mapping a from x86_64
-    register name to an slot index in the arguments user-space stack loaded into the
-    kernel stack in a system call handler.
-    """
-
-    register_names = [
-        '%r10', '%r11', '%r12', '%r13', '%r14', '%r15', '%r8', '%r9', '%rax', '%rbp',
-        '%rbx', '%rcx'
-    ]
-
-    def __init__(self, name):
-        assert name in X86StackRegister.register_names
-        self.name = name
-        self.sym = Symbol(name, INT)
-
-    # condition: is a register that needs to be loaded from user-space stack
-    def has_valid_stack_slot(self):
-	return And(GE(self.sym, Int(min(stack))), LE(self.sym, Int(max(stack)))) 
-
-    # condition: needs to be loaded from user-space stack before register
-    def precedes(self, register):
-        return LT(self.sym, register.sym)
-
-    def pushq(self):
-        return '    pushq  %s' % (self.name)
-
-    @classmethod
-    def get_stack_registers(cls):
-        return {name: cls(name) for name in cls.register_names}
-
-    def get_stack_index(self, model):
-        return model.get_py_value(self.sym)
-
-
-regs = X86StackRegister.get_stack_registers()
+from pysmt.shortcuts import And, get_model
+from register import X86StackRegister
 
 
 def synthesize():
+    """
+    Use an SMT solver to synthesize the assembly for copying user-space stack
+    arguments into the kernel.
+    """     
+
+    # CPU registers
+    regs = X86StackRegister.get_stack_registers()
 
     # machine description
-
     stack_ordering = And(
         # every register has to be brought onto the stack
         And(reg.has_valid_stack_slot() for reg in regs.values()),
@@ -82,21 +34,18 @@ def synthesize():
         regs['%r8'].precedes(regs['%r10']),
     )
         
-    # run model
+    # solve stack order
     model = get_model(stack_ordering)
-
-    print "\nRANDOM CODE>>>\n"
-    for reg in regs.values():
-        print reg.pushq()
-
-    # create stack
     stack = sorted(regs.values(), key=lambda r: r.get_stack_index(model))
 
     print "\nSYNTHESIZED CODE>>>\n"
     for reg in stack:
         print reg.get_stack_index(model), reg.pushq()
     
-    return '\n'.join([reg.pushq() for reg in stack])
+    # generate code
+    asm = '\n'.join([reg.pushq() for reg in stack])
+
+    return asm
 
 
 t = Template(open('entry.S.synth', 'r').read())
