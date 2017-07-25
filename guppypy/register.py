@@ -39,6 +39,3 @@ class X86StackRegister(object):
 
     def get_stack_index(self, model):
         return model.get_py_value(self.sym)
-
-
-
