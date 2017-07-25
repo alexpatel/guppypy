@@ -7,7 +7,7 @@ system call in BarrelfishOS.
 
 from jinja2 import Template
 from pysmt.typing import INT
-from pysmt.shortcuts import Symbol, Int, And, GE, LE, GT, get_model
+from pysmt.shortcuts import Symbol, Int, And, GE, LE, LT, get_model
 
 from register import Register as REG
 
@@ -29,18 +29,18 @@ def is_valid_stack_arg(reg):
 
 domain = [
     And(is_valid_stack_arg(reg) for reg in registers.values()),
-    GT(registers['%rcx'], registers['%r11']), 
-    GT(registers['%r11'], registers['%rbx']),
-    GT(registers['%rbx'], registers['%rbp']),
-    GT(registers['%rbp'], registers['%rax']),
-    GT(registers['%rax'], registers['%r15']),
-    GT(registers['%rax'], registers['%r15']),
-    GT(registers['%r15'], registers['%r14']),
-    GT(registers['%r14'], registers['%r13']),
-    GT(registers['%r13'], registers['%r12']),
-    GT(registers['%r12'], registers['%r9']),
-    GT(registers['%r9'], registers['%r8']),
-    GT(registers['%r8'], registers['%r10']),
+    LT(registers['%rcx'], registers['%r11']), 
+    LT(registers['%r11'], registers['%rbx']),
+    LT(registers['%rbx'], registers['%rbp']),
+    LT(registers['%rbp'], registers['%rax']),
+    LT(registers['%rax'], registers['%r15']),
+    LT(registers['%rax'], registers['%r15']),
+    LT(registers['%r15'], registers['%r14']),
+    LT(registers['%r14'], registers['%r13']),
+    LT(registers['%r13'], registers['%r12']),
+    LT(registers['%r12'], registers['%r9']),
+    LT(registers['%r9'], registers['%r8']),
+    LT(registers['%r8'], registers['%r10']),
 ]
 
 problem = And(domain) 
@@ -51,7 +51,6 @@ else:
     print 'No solutions found.'
 
 
-
 def custom_function(a):
     return a.replace('o', 'ay')
 
@@ -60,4 +59,10 @@ jinga_html_template = Template(template)
 jinga_html_template.globals['custom_function'] = custom_function
 
 fields = {'first_name': 'Jo'}
-print jinga_html_template.render(**fields)
+#print jinga_html_template.render(**fields)
+
+def synthesize():
+    return 'false'
+
+t = Template(open('entry.S.synth', 'r').read())
+print t.render(synthesize=synthesize)
