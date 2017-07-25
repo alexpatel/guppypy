@@ -1,68 +1,103 @@
 #!/usr/env/bin python
 
 """
-Use model checking to synthesize X86 assembly to restore user stack after
-system call in BarrelfishOS.
+Use a machine description to synthesize X86 assembly that restores user stack
+in a system call handler in BarrelfishOS.
 """
 
 from jinja2 import Template
+
+
 from pysmt.typing import INT
-from pysmt.shortcuts import Symbol, Int, And, GE, LE, LT, get_model
-
-from register import Register as REG
-
-def create_symbols(registers):
-    return {
-        reg: Symbol(reg, INT) for reg in registers
-    }
-
-registers = create_symbols([
-    '%r10', '%r11', '%r12', '%r13', '%r14', '%r15', '%r8', '%r9', '%rax', '%rbp',
-    '%rbx', '%rcx'
-])
-
-stack = range(2, 14)
-first_index, last_index= min(stack), max(stack)
-
-def is_valid_stack_arg(reg):
-    return And(GE(reg, Int(first_index)), LE(reg, Int(last_index))) 
-
-domain = [
-    And(is_valid_stack_arg(reg) for reg in registers.values()),
-    LT(registers['%rcx'], registers['%r11']), 
-    LT(registers['%r11'], registers['%rbx']),
-    LT(registers['%rbx'], registers['%rbp']),
-    LT(registers['%rbp'], registers['%rax']),
-    LT(registers['%rax'], registers['%r15']),
-    LT(registers['%rax'], registers['%r15']),
-    LT(registers['%r15'], registers['%r14']),
-    LT(registers['%r14'], registers['%r13']),
-    LT(registers['%r13'], registers['%r12']),
-    LT(registers['%r12'], registers['%r9']),
-    LT(registers['%r9'], registers['%r8']),
-    LT(registers['%r8'], registers['%r10']),
-]
-
-problem = And(domain) 
-model = get_model(problem)
-if model:
-    print model
-else:
-    print 'No solutions found.'
+from pysmt.shortcuts import Symbol, Int, And, GE, LE, get_model
+from pysmt.shortcuts import LT
 
 
-def custom_function(a):
-    return a.replace('o', 'ay')
+# user-space stack
+stack = range(0, 12)
 
-template = 'Hey, my name is {{ custom_function(first_name) }}'
-jinga_html_template = Template(template)
-jinga_html_template.globals['custom_function'] = custom_function
+# CPU registers
+regs = dict()
 
-fields = {'first_name': 'Jo'}
-#print jinga_html_template.render(**fields)
+
+class X86StackRegister(object):
+    """
+    A X86StackRegister is a logical atom. It stores a mapping a from x86_64
+    register name to an slot index in the arguments user-space stack loaded into the
+    kernel stack in a system call handler.
+    """
+
+    register_names = [
+        '%r10', '%r11', '%r12', '%r13', '%r14', '%r15', '%r8', '%r9', '%rax', '%rbp',
+        '%rbx', '%rcx'
+    ]
+
+    def __init__(self, name):
+        assert name in X86StackRegister.register_names
+        self.name = name
+        self.sym = Symbol(name, INT)
+
+    # condition: is a register that needs to be loaded from user-space stack
+    def has_valid_stack_slot(self):
+	return And(GE(self.sym, Int(min(stack))), LE(self.sym, Int(max(stack)))) 
+
+    # condition: needs to be loaded from user-space stack before register
+    def precedes(self, register):
+        return LT(self.sym, register.sym)
+
+    def pushq(self):
+        return '    pushq  %s' % (self.name)
+
+    @classmethod
+    def get_stack_registers(cls):
+        return {name: cls(name) for name in cls.register_names}
+
+    def get_stack_index(self, model):
+        return model.get_py_value(self.sym)
+
+
+regs = X86StackRegister.get_stack_registers()
+
 
 def synthesize():
-    return 'false'
+
+    # machine description
+
+    stack_ordering = And(
+        # every register has to be brought onto the stack
+        And(reg.has_valid_stack_slot() for reg in regs.values()),
+
+        # x86 syscall callframe register order
+        regs['%rcx'].precedes(regs['%r11']), 
+        regs['%r11'].precedes(regs['%rbx']),
+        regs['%rbx'].precedes(regs['%rbp']),
+        regs['%rbp'].precedes(regs['%rax']),
+        regs['%rax'].precedes(regs['%r15']),
+        regs['%rax'].precedes(regs['%r15']),
+        regs['%r15'].precedes(regs['%r14']),
+        regs['%r14'].precedes(regs['%r13']),
+        regs['%r13'].precedes(regs['%r12']),
+        regs['%r12'].precedes(regs['%r9']),
+        regs['%r9'].precedes(regs['%r8']),
+        regs['%r8'].precedes(regs['%r10']),
+    )
+        
+    # run model
+    model = get_model(stack_ordering)
+
+    print "\nRANDOM CODE>>>\n"
+    for reg in regs.values():
+        print reg.pushq()
+
+    # create stack
+    stack = sorted(regs.values(), key=lambda r: r.get_stack_index(model))
+
+    print "\nSYNTHESIZED CODE>>>\n"
+    for reg in stack:
+        print reg.get_stack_index(model), reg.pushq()
+    
+    return '\n'.join([reg.pushq() for reg in stack])
+
 
 t = Template(open('entry.S.synth', 'r').read())
 print t.render(synthesize=synthesize)
