@@ -1,3 +1,6 @@
 [submodule "guppy"]
 	path = guppy
 	url = git@github.com:Harvard-PRINCESS/Guppy.git
+[submodule "guppypy/guppy"]
+	path = guppypy/guppy
+	url = git@github.com:Harvard-PRINCESS/Guppy.git
