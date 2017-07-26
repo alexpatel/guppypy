@@ -5,8 +5,8 @@ from pysmt.typing import INT
 class X86StackRegister(object):
     """
     A X86StackRegister is a logical atom. It stores a mapping a from x86_64
-    register name to an slot index in the arguments user-space stack loaded into the
-    kernel stack in a system call handler.
+    register name to an slot index into the user-space stack arguments loaded into
+    the kernel stack in a system call handler.
     """
 
     stack = range(0, 12)
@@ -81,4 +81,4 @@ def synthesize():
     asm = block % 'START' + asm  + '\n' + block % 'END'
     print '    ' + asm.replace('\n', '\n    ')
 
-    return asm
+    return [asm]
