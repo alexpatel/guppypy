@@ -137,7 +137,7 @@ Your branch is up-to-date with 'origin/dev'.
 > Margo: we want to work with legacy systems (and barrelfish is a legacy system), and build generalizable techniques that can be applied to any traditional or well-designed non-traditional kernel
 
 This library will allow you to synthesize cookbook recipes or Haskell monads - anything that is under version control.
-1. Include the project you want to synthesize as a git submodule (currently only configured with [Harvard-PRINCESS/Guppy](https://github.com/Harvard-PRINCESS/Guppy).
+1. Include the project you want to synthesize as a git submodule (currently only configured with [Harvard-PRINCESS/Guppy](https://github.com/Harvard-PRINCESS/Guppy)).
 2. Copy the file you want to synthesize into `guppypy/templates`.
 3. Wrap the block you want to synthesize within `{% block synthesize %}` and `{% endblock %}`.
 4. Write a Dockerfile to run your tests in a container.
