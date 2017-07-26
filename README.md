@@ -130,9 +130,9 @@ Switched to branch 'dev'
 Your branch is up-to-date with 'origin/dev'.
 
 >>> Done patching BarrelfishOS source
+```
 
 # Storyline
-
 
 > Margo: we want to work with legacy systems (and barrelfish is a legacy system), and build generalizable techniques that can be applied to any traditional or well-designed non-traditional kernel
 
