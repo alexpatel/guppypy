@@ -1,5 +1,9 @@
 # guppypy
 
+- ["Calibrating Research in Program Synthesis Using 72,000 Hours of Programmer Time"
+](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.473.1963&rep=rep1&type=pdf) (Barman et al., 2010)
+- ["Generalized Sketching: Programming with Angelic Non-Determinism"](http://dl.acm.org/citation.cfm?id=1706339) (Akiba et al., 2013)
+
 # Example
 
 This example synthesizes BarrelfishOS x86_64 assembly for loading user-space syscall arguments into the kernel during a system call handler.
