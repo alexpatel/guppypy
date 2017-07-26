@@ -78,7 +78,7 @@ def patch_commit(parent, synth_cand, dest_path, version):
 
         # commit to repo
         os.system('git add %s' % dest_path)
-        os.system('git commit -m "[auto] add %s"' % version)
+        os.system('git commit -m "[auto] %s"' % version)
         os.system('git push origin %s' % version)
 	os.system('git checkout dev')
     
