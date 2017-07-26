@@ -1,11 +1,6 @@
 # guppypy
 
-# Usage
-
-```
-$ pysmt-install -env  # copy and run in shell
-$ python guppypy/synthesize.py
-```
+## Installation/Usage/Example
 
 ```bash
 $ git clone --recursive -j4 git@github.com:alexpatel/guppypy.git
