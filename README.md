@@ -4,7 +4,7 @@
 
 This example synthesizes BarrelfishOS x86_64 assembly for loading user-space syscall arguments into the kernel during a system call handler.
 
-It creates three synthesis candidates: one by SMT solver and two random ones.
+It creates three synthesis candidates: one by SMT solver and two random ones. It then commits each candidate to version control and tests each candidate using CircleCI and Docker.
 
 ```asm
 {% block synthesize %}
