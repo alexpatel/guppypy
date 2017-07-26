@@ -1,7 +1,40 @@
 # guppypy
 
-## Installation/Usage/Example
+# Example
 
+This example synthesizes BarrelfishOS x86_64 assembly for loading user-space syscall arguments into the kernel during a system call handler.
+
+It creates three synthesis candidates: one by SMT solver and two random ones.
+
+```asm
+{% block synthesize %}
+    pushq   %rcx            /* Save user-space RIP */
+    pushq   %r11            /* Save user-space RFLAGS */
+
+    pushq   %rbx            /* arg11 */
+    pushq   %rbp            /* arg10 */
+    pushq   %rax            /* arg9 */
+    pushq   %r15            /* arg8 */
+    pushq   %r14            /* arg7 */
+    pushq   %r13            /* arg6 */
+    pushq   %r12            /* arg5 */
+    pushq   %r9             /* arg4 */
+    pushq   %r8             /* arg3 */
+    pushq   %r10            /* arg2 in r10, NOT rcx from syscall */
+{% endblock %}
+```
+
+## CircleCI builds:
+- [rand-1](https://circleci.com/gh/Harvard-PRINCESS/Guppy/93)
+- [rand-2](https://circleci.com/gh/Harvard-PRINCESS/Guppy/94)
+- [smt](https://circleci.com/gh/Harvard-PRINCESS/Guppy/95)
+
+## Diffs
+- [rand-1](https://github.com/Harvard-PRINCESS/Guppy/tree/stack_order.synthesize_1501045021_rand-1)
+- [rand-2](https://github.com/Harvard-PRINCESS/Guppy/tree/stack_order.synthesize_1501045021_rand-2)
+- [smt](https://github.com/Harvard-PRINCESS/Guppy/tree/stack_order.synthesize_1501045021_smt)
+
+## Demo
 ```bash
 $ git clone --recursive -j4 git@github.com:alexpatel/guppypy.git
 $ cd guppypy
@@ -16,7 +49,7 @@ $ ./synthesize.py \
     --dest kernel/arch/x86_64/entry.S
 ```
 
-```
+```bash
 >>> Starting synthesizer test version=stack_order.synthesize_1501045021
 
 >>> Loading synthesizer stack_order.synthesize for template entry.S.jinja2
