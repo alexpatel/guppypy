@@ -7,37 +7,100 @@ $ pysmt-install -env  # copy and run in shell
 $ python guppypy/synthesize.py
 ```
 
-# Example Output
+```bash
+$ git clone --recursive -j4 git@github.com:alexpatel/guppypy.git
+$ cd guppypy
+$ pip install -r requirements.txt
+$ pysmt-install --msat
+$ pysmt-install --env  # <-- run what it prints
+$ pysmt-install --check # MSAT should be available
+$ cd guppypy
+$ ./synthesize.py \
+    --synth stack_order.synthesize \
+    --file entry.S.jinja2 \
+    --dest kernel/arch/x86_64/entry.S
+>>> Starting synthesizer test version=stack_order.synthesize_1501045021
 
-```
-syscall_path:
-    movq    %rsp, user_stack_save(%rip)
-    lea (KERNEL_STACK + KERNEL_STACK_SIZE)(%rip), %rsp
+>>> Loading synthesizer stack_order.synthesize for template entry.S.jinja2
 
-    /* SYNTHESIZED CODE START */
-    pushq  %rcx
-    pushq  %r11
-    pushq  %rbx
-    pushq  %rbp
-    pushq  %rax
-    pushq  %r15
-    pushq  %r14
-    pushq  %r13
-    pushq  %r12
-    pushq  %r9
-    pushq  %r8
-    pushq  %r10
-    /* SYNTHESIZED CODE END */
+>>> Synthesizing program...
+> SMT synthesizer
+    /* SYNTHESIZED_START */
+        pushq  %rcx
+        pushq  %r11
+        pushq  %rbx
+        pushq  %rbp
+        pushq  %rax
+        pushq  %r15
+        pushq  %r14
+        pushq  %r13
+        pushq  %r12
+        pushq  %r9
+        pushq  %r8
+        pushq  %r10
+    /* SYNTHESIZED_END */
+    
+> Random synthesizer
+    /* SYNTHESIZED_START */
+        pushq  %rbp
+        pushq  %rax
+        pushq  %rcx
+        pushq  %r14
+        pushq  %r11
+        pushq  %r8
+        pushq  %r15
+        pushq  %rbx
+        pushq  %r10
+        pushq  %r13
+        pushq  %r12
+        pushq  %r9
+    /* SYNTHESIZED_END */
+    
+> Random synthesizer
+    /* SYNTHESIZED_START */
+        pushq  %r8
+        pushq  %r13
+        pushq  %rbp
+        pushq  %r15
+        pushq  %rbx
+        pushq  %rcx
+        pushq  %r10
+        pushq  %r12
+        pushq  %rax
+        pushq  %r14
+        pushq  %r9
+        pushq  %r11
+    /* SYNTHESIZED_END */
+    
 
-    movq    %r11, %r8   /* 5th function argument is user's flags */
-    movq    %rcx, %r9   /* 6th function argument is user's IP */
-    movq    %rsp, %rcx  /* 4th function argument is pointer to arg buffer */
-    callq   sys_syscall     /* Process system call in C */
-    addq    $0x50, %rsp     /* Remove buffer from stack */
-    popq    %r11            /* Restore RFLAGS */
-    popq    %rcx            /* Restore RIP */
-    movq    user_stack_save(%rip), %rsp /* Restore user stack */
-    sysretq             /* Return to user-space */
-    .bss
-    .comm   user_stack_save, 8
+>>> Patching BarrelfishOS with synthesis candidate stack_order.synthesize_1501045021_rand-1
+Switched to a new branch 'stack_order.synthesize_1501045021_rand-1'
+[stack_order.synthesize_1501045021_rand-1 ec055a2f9] [auto] add stack_order.synthesize_1501045021_rand-1
+ 1 file changed, 17 insertions(+), 13 deletions(-)
+To github.com:Harvard-PRINCESS/Guppy.git
+ * [new branch]          stack_order.synthesize_1501045021_rand-1 -> stack_order.synthesize_1501045021_rand-1
+Switched to branch 'dev'
+Your branch is up-to-date with 'origin/dev'.
+
+>>> Done patching BarrelfishOS source
+
+>>> Patching BarrelfishOS with synthesis candidate stack_order.synthesize_1501045021_rand-2
+Switched to a new branch 'stack_order.synthesize_1501045021_rand-2'
+[stack_order.synthesize_1501045021_rand-2 6ee48584b] [auto] add stack_order.synthesize_1501045021_rand-2
+To github.com:Harvard-PRINCESS/Guppy.git
+ * [new branch]          stack_order.synthesize_1501045021_rand-2 -> stack_order.synthesize_1501045021_rand-2
+Switched to branch 'dev'
+Your branch is up-to-date with 'origin/dev'.
+
+>>> Done patching BarrelfishOS source
+
+>>> Patching BarrelfishOS with synthesis candidate stack_order.synthesize_1501045021_smt
+Switched to a new branch 'stack_order.synthesize_1501045021_smt'
+[stack_order.synthesize_1501045021_smt 23c8cc4cc] [auto] add stack_order.synthesize_1501045021_smt
+To github.com:Harvard-PRINCESS/Guppy.git
+ * [new branch]          stack_order.synthesize_1501045021_smt -> stack_order.synthesize_1501045021_smt
+Switched to branch 'dev'
+Your branch is up-to-date with 'origin/dev'.
+
+>>> Done patching BarrelfishOS source
 ```

@@ -122,7 +122,7 @@ def main():
     synth_func = getattr(mod, func)
 
     # synthesize code
-    print log('Running SMT to synthesize ASM to load stack registers')
+    print log('Synthesizing program...')
     synth_candidates = synth_func()
 
     # render each synthesis candidate and add to guppy version control
