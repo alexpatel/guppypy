@@ -79,7 +79,8 @@ def patch_commit(parent, synth_cand, dest_path, version):
         # commit to repo
         os.system('git add %s' % dest_path)
         os.system('git commit -m "[auto] add %s"' % version)
-        #os.system('git push origin %s' % version)
+        os.system('git push origin %s' % version)
+	os.system('git checkout dev')
     
     print log('Done patching BarrelfishOS source')
 
@@ -98,10 +99,6 @@ def build_barrelfish(version):
 
     msg = 'If you got without kill -9, you probably passed :) (%s)'
     print log(msg % version)
-
-
-def restore_barrelfish_trunk(version):
-    os.system('git checkout dev')
    
 
 def main():
@@ -129,12 +126,12 @@ def main():
     synth_candidates = synth_func()
 
     # render each synthesis candidate and add to guppy version control
-    for ndx, cand in enumerate(synth_candidates):
-	cand_ver = '%s_%s' % (version, str(ndx))
+    for tag, candidate in synth_candidates.iteritems():
 
         # add candidate to version control
-        patch_commit(args.synth_template, cand, args.dest_path, cand_ver)
-        restore_barrelfish_trunk(cand_ver)
+	cand_ver = '%s_%s' % (version, tag)
+        patch_commit(args.synth_template, candidate, args.dest_path, cand_ver)
+
 
 if __name__ == '__main__':
     main()
