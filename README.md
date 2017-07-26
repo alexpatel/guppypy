@@ -6,6 +6,12 @@ This example synthesizes BarrelfishOS x86_64 assembly for loading user-space sys
 
 It creates three synthesis candidates: one by SMT solver and two random ones. It then commits each candidate to version control and tests each candidate using CircleCI and Docker.
 
+| Candidate     | Guppy Diff    | CircleCI build  |
+| ------------- |:-------------:| -----:|
+| rand-1      | [rand-1](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_rand-1.diff) | [rand-1](https://circleci.com/gh/Harvard-PRINCESS/Guppy/93) |
+| rand-2     | [rand-2](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_rand-2.diff) | [rand-2](https://circleci.com/gh/Harvard-PRINCESS/Guppy/94) |
+| smt | [smt](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_smt.diff) | [smt](https://circleci.com/gh/Harvard-PRINCESS/Guppy/95) |
+
 ```asm
 {% block synthesize %}
     pushq   %rcx            /* Save user-space RIP */
@@ -23,16 +29,6 @@ It creates three synthesis candidates: one by SMT solver and two random ones. It
     pushq   %r10            /* arg2 in r10, NOT rcx from syscall */
 {% endblock %}
 ```
-
-## CircleCI builds:
-- [rand-1](https://circleci.com/gh/Harvard-PRINCESS/Guppy/93)
-- [rand-2](https://circleci.com/gh/Harvard-PRINCESS/Guppy/94)
-- [smt](https://circleci.com/gh/Harvard-PRINCESS/Guppy/95)
-
-## Diffs
-- [rand-1](https://github.com/Harvard-PRINCESS/Guppy/tree/stack_order.synthesize_1501045021_rand-1)
-- [rand-2](https://github.com/Harvard-PRINCESS/Guppy/tree/stack_order.synthesize_1501045021_rand-2)
-- [smt](https://github.com/Harvard-PRINCESS/Guppy/tree/stack_order.synthesize_1501045021_smt)
 
 ## Demo
 ```bash
