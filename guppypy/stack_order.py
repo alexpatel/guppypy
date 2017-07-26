@@ -72,16 +72,13 @@ def synthesize():
     
     # Use a SMT solver to figure out the order to pull register from user-space
     # onto the kernel stack
-
     model = get_model(stack_order_desc)
     stack = sorted(regs.values(), key=lambda r: r.get_stack_index(model))
     
-    print '\nSYNTHESIZED CODE>>>\n'
-
-    for reg in stack:
-        print reg.pushq()
-    
     # generate code
     asm = '\n'.join([reg.pushq() for reg in stack])
+    block = '/* SYNTHESIZED_%s */\n'
+    asm = block % 'START' + asm  + '\n' + block % 'END'
+    print '    ' + asm.replace('\n', '\n    ')
 
     return asm
