@@ -19,6 +19,9 @@ $ ./synthesize.py \
     --synth stack_order.synthesize \
     --file entry.S.jinja2 \
     --dest kernel/arch/x86_64/entry.S
+```
+
+```
 >>> Starting synthesizer test version=stack_order.synthesize_1501045021
 
 >>> Loading synthesizer stack_order.synthesize for template entry.S.jinja2
