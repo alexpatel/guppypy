@@ -4,6 +4,19 @@
 ](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.473.1963&rep=rep1&type=pdf) (Barman et al., 2010)
 - ["Generalized Sketching: Programming with Angelic Non-Determinism"](http://dl.acm.org/citation.cfm?id=1706339) (Akiba et al., 2013)
 
+> Margo: we want to work with legacy systems (and barrelfish is a legacy system), and build generalizable techniques that can be applied to any traditional or well-designed non-traditional kernel
+
+This library will allow you to synthesize cookbook recipes or Haskell monads - anything that is under version control.
+- include the project you want to synthesize as a git submodule
+- copy the file you want to synthesize into `guppypy/templates`
+- wrap the block you want to synthesize within `{% block synthesize %}` and `{% endblock %}`
+- write a Dockerfile to run your tests in a container.
+- Synthesize away! Your synthesized guppies will be tested for you in the cloud :)
+
+> verifiable kernels are great but A DIFFERENT PROBLEM. we want to mitigate the labor required to PORT AN OPERATING SYSTEM.
+
+The idea of this toolkit is: instead of spending 400$/LOC to port through verification, just throw cloud computing power at the problem and port by construction.
+
 # Example
 
 This example synthesizes BarrelfishOS x86_64 assembly for loading user-space syscall arguments into the kernel during a system call handler.
