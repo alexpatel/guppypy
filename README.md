@@ -1,16 +1,36 @@
 # guppypy
 
-# Example
+This is a Python toolkit for performing program synthesis on the BarrelfishOS
+operating system. The goal of this software is to make it easy for you to test
+strategies for automatically porting the Barrelfish to new platforms/architectures.
 
-This example synthesizes BarrelfishOS x86_64 assembly for loading user-space syscall arguments into the kernel during a system call handler.
+The library itself currently 75 lines of Python (with the demo, still <150).
 
-It creates three synthesis candidates: one by SMT solver and two random ones. It then commits each candidate to version control and tests each candidate using CircleCI and Docker.
+The way it works is:
 
-| Candidate     | Guppy Diff    | CircleCI build  |
-| :-------------: |:-------------:| :-----:|
-| rand-1      | [rand-1](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_rand-1.diff) | [rand-1](https://circleci.com/gh/Harvard-PRINCESS/Guppy/93) |
-| rand-2     | [rand-2](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_rand-2.diff) | [rand-2](https://circleci.com/gh/Harvard-PRINCESS/Guppy/94) |
-| smt | [smt](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_smt.diff) | [smt](https://circleci.com/gh/Harvard-PRINCESS/Guppy/95) |
+- You create a "synthesis template" from a source file in BarrelfishOS
+demarcating which code blocks are targeted
+- You write a Python module with a synthesize() function that returns a list
+of synthesized snippets to try
+- My library calls your synthesize() function and:
+    - Renders each candidate code snippet into your template and then
+    commits it to a new branch in Guppy version control
+    - Runs the test suite against live BarrelfishOS instances running your
+    synthesized code using Docker/CircleCI
+
+# Demo
+
+This example synthesizes BarrelfishOS x86_64 assembly for loading user-space
+syscall arguments into the kernel during a system call handler.
+
+It creates three synthesis candidates: one by SMT solver and two random ones. It
+then commits each candidate to version control and tests each candidate using
+CircleCI and Docker.
+
+The relevant files are:
+- [templates/entry.S.jinja2](https://github.com/alexpatel/guppypy/blob/master/guppypy/templates/entry.S.jinja2#L459) - syscall handler code synthesis template
+- [stack_order.py](https://github.com/alexpatel/guppypy/blob/master/guppypy/stack_order.py) - uses a constraint solver to synthesize assembly to fill the snippet
+- [synthesize.py](https://github.com/alexpatel/guppypy/blob/master/guppypy/synthesize.py) - guppypy library internals & entrypoint
 
 ```asm
 {% block synthesize %}
@@ -29,7 +49,13 @@ It creates three synthesis candidates: one by SMT solver and two random ones. It
 {% endblock %}
 ```
 
-## Demo
+| Candidate     | Guppy Diff    | CircleCI build  |
+| :-------------: |:-------------:| :-----:|
+| rand-1      | [rand-1](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_rand-1.diff) | [rand-1](https://circleci.com/gh/Harvard-PRINCESS/Guppy/93) |
+| rand-2     | [rand-2](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_rand-2.diff) | [rand-2](https://circleci.com/gh/Harvard-PRINCESS/Guppy/94) |
+| smt | [smt](https://github.com/Harvard-PRINCESS/Guppy/compare/dev...stack_order.synthesize_1501045021_smt.diff) | [smt](https://circleci.com/gh/Harvard-PRINCESS/Guppy/95) |
+
+
 ```bash
 $ git clone --recursive -j4 git@github.com:alexpatel/guppypy.git
 $ cd guppypy
