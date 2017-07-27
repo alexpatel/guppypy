@@ -131,24 +131,6 @@ Your branch is up-to-date with 'origin/dev'.
 >>> Done patching BarrelfishOS source
 ```
 
-# Storyline
-
-> Margo: we want to work with legacy systems (and barrelfish is a legacy system), and build generalizable techniques that can be applied to any traditional or well-designed non-traditional kernel
-
-This library will allow you to synthesize cookbook recipes or Haskell monads - anything that is under version control.
-1. Include the project you want to synthesize as a git submodule (currently only configured with [Harvard-PRINCESS/Guppy](https://github.com/Harvard-PRINCESS/Guppy)).
-2. Copy the file you want to synthesize into `guppypy/templates`.
-3. Wrap the block you want to synthesize within `{% block synthesize %}` and `{% endblock %}`.
-4. Write a Dockerfile to run your tests in a container.
-5. Synthesize away!
-    - Your synthesis code is separated completely from the legacy system that you're porting.
-    - Your synthesized guppies are tested automatically for you in the cloud :)
-
-> verifiable kernels are great but A DIFFERENT PROBLEM. we want to mitigate the labor required to PORT AN OPERATING SYSTEM.
-
-The idea of this toolkit is: instead of spending 400$/LOC to port through verification, just throw cloud computing power at the problem and port by construction.
-
-
 # Citations
 
 - ["A Lightweight Symbolic Virtual Machine for Solver-Aided Host Languages"](http://homes.cs.washington.edu/%7Eemina/pubs/rosette.pldi14.pdf)
