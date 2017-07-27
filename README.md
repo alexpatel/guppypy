@@ -16,7 +16,6 @@ It creates three synthesis candidates: one by SMT solver and two random ones. It
 {% block synthesize %}
     pushq   %rcx            /* Save user-space RIP */
     pushq   %r11            /* Save user-space RFLAGS */
-
     pushq   %rbx            /* arg11 */
     pushq   %rbp            /* arg10 */
     pushq   %rax            /* arg9 */
@@ -152,8 +151,9 @@ The idea of this toolkit is: instead of spending 400$/LOC to port through verifi
 
 # Citations
 
+- ["A Lightweight Symbolic Virtual Machine for Solver-Aided Host Languages"](http://homes.cs.washington.edu/%7Eemina/pubs/rosette.pldi14.pdf)
+- ["Bayesian Sketch Learning for Program Synthesis"](https://arxiv.org/abs/1703.05698)
 - ["Calibrating Research in Program Synthesis Using 72,000 Hours of Programmer Time"
-](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.473.1963&rep=rep1&type=pdf) (Barman et al., 2010)
-- ["Generalized Sketching: Programming with Angelic Non-Determinism"](http://dl.acm.org/citation.cfm?id=1706339) (Akiba et al., 2013)
-
+](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.473.1963&rep=rep1&type=pdf) (Barman et al. 2010)
+- ["Generalized Sketching: Programming with Angelic Non-Determinism"](http://dl.acm.org/citation.cfm?id=1706339) (Akiba et al. 2013)
 ```
