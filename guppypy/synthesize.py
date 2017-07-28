@@ -51,6 +51,10 @@ def patch_commit(parent, synth_cand, dest_path, version):
     """.format(parent, cand)
     synth_child = inject_template(synth_cand)
 
+    # create templates/build/ if it does not exist
+    if not os.path.exists('templates/build'):
+        os.makedirs('templates/build')
+
     # write out child template to build/
     build_templ  = os.path.join('build',
                                 '%s.jinja2' % version)
@@ -127,9 +131,8 @@ def main():
 
     # render each synthesis candidate and add to guppy version control
     for tag, candidate in synth_candidates.iteritems():
-
         # add candidate to version control
-	cand_ver = '%s_%s' % (version, tag)
+        cand_ver = '%s_%s' % (version, tag)
         patch_commit(args.synth_template, candidate, args.dest_path, cand_ver)
 
 
