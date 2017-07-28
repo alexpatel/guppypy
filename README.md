@@ -18,6 +18,41 @@ of synthesized snippets to try
     - Runs the test suite against live BarrelfishOS instances running your
     synthesized code using Docker/CircleCI
 
+# Getting guppypy
+
+You should clone this recursively, to pull down a copy of Guppy:
+```bash
+git clone --recursive git@github.com:alexpatel/guppypy.git
+```
+To update this copy in the future, invoke:
+```bash
+git submodule update --recursive
+```
+
+Running it requires pysmt and jinja2. You should be able to get these using:
+```bash
+sudo apt install python-pip
+pip install --upgrade pip
+pip install jinja2 pysmt
+```
+
+You will also want to have an SMT solver installed: pySMT works with msat,
+z3, cvc4, yices, btor, picosat, and bdd. PySMT provides a convenient function
+for installing your SMT solver of choice, along with its python bindings:
+```bash
+pysmt-install --z3
+```
+Finally, `pysmt-install --check` will check whether PySMT can use the installed solvers.
+
+# Running guppypy
+```bash
+./synthesize.py
+```
+Arguments:
+- `-f [file]` - synthesis template to use, e.g. `entry.S.jinja2`
+- `-s [module.method]` - synthesizer to run, e.g. `stack_order.synthesize`
+- `-d [dir]` - BFish path for synthesized output, e.g. `kernel/arch/x86_64/entry.S`
+
 # Demo
 
 This example synthesizes BarrelfishOS x86_64 assembly for loading user-space
