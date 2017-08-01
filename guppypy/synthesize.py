@@ -84,7 +84,9 @@ def patch_commit(parent, synth_cand, dest_path, version):
         os.system('git add %s' % dest_path)
         os.system('git commit -m "[auto] %s"' % version)
         os.system('git push origin %s' % version)
-	os.system('git checkout dev')
+        os.system('git checkout dev')
+        time.sleep(10)
+        os.system('git push origin :%s' % version)
     
     print log('Done patching BarrelfishOS source')
 
